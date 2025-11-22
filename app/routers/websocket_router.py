@@ -16,6 +16,8 @@ game_engine.subscribe(connection_manager.on_game_state_change)
 async def websocket_endpoint(websocket: WebSocket, client_id: int):
     await connection_manager.connect(websocket)
 
+    user_session = ai_service.create_session()
+
     initial_state = game_engine.get_state()
     await connection_manager.on_game_state_change(initial_state)
 
@@ -25,9 +27,9 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
 
             # Identifica um comando de Admin e manda a engine processar.
             if data.startswith("/"):
-                if any(cmd in data for cmd in["/adv", "/mapa", "/jogo",
-                                              "/reset"]):
-                    ai_service.reset_memory()
+                cmds = ["/adv", "/mapa", "/jogo", "/reset"]
+                if any(cmd in data for cmd in cmds):
+                    user_session = ai_service.create_session()
 
                 evento = await game_engine.processar_admin(data)
 
@@ -70,6 +72,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
                         ))
 
                         resposta_ia = await ai_service.get_response(
+                            user_session,
                             "EVENTO SISTEMA",
                             contexto_jogo
                         )
@@ -119,7 +122,11 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
                 f"Termômetro da Torcida: {state.temperatura}"
             )
 
-            resposta_ia = await ai_service.get_response(data, contexto_jogo)
+            resposta_ia = await ai_service.get_response(
+                user_session,
+                data,
+                contexto_jogo
+            )
 
             await game_engine.processar_sentimento(resposta_ia)
 
