@@ -121,10 +121,10 @@ body {
 /* --- CHAT --- */
 .chat-area {
     flex: 1; overflow-y: auto;
-    padding: 1rem; /* 16px */
-    display: flex; flex-direction: column; gap: 0.625rem; /* 10px */
+    padding: 1rem;
+    display: flex; flex-direction: column; gap: 0.625rem;
+    padding-bottom: 6rem;
 
-    /* Wallpaper com overlay */
     background:
         linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
         url('https://i.pinimg.com/originals/37/be/88/37be8803ec8f34473f6fb5fd1a449642.jpg');
@@ -181,10 +181,17 @@ body {
 
 /* --- INPUT --- */
 .input-area {
-    display: flex; padding: 0.625rem; /* 10px */
+    /* Força o input a ficar colado no vidro do celular */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Garante que fique por cima de tudo */
+
+    display: flex; padding: 0.625rem;
     background: #080808; border-top: 1px solid #222;
-    flex-shrink: 0;
-    position: relative; z-index: 20;
+
+    /* Garante que o iPhone X+ não corte o botão */
     padding-bottom: max(0.625rem, env(safe-area-inset-bottom));
 }
 
